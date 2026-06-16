@@ -1,0 +1,15 @@
+{
+  "name": "mipi_fw",
+  "type": "HOST",
+  "platform": "mipi_platform",
+  "domain": "standalone_microblaze_0",
+  "cpuInstance": "microblaze_0",
+  "cpuType": "microblaze_riscv",
+  "os": "standalone",
+  "configuration": {
+    "componentType": "HOST",
+    "hostToolchainConfigurations": []
+  },
+  "domainRealName": "standalone_microblaze_0",
+  "applicationFlow": "EMBEDDED"
+}

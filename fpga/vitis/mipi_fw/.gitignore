@@ -1,0 +1,28 @@
+# Ignore build output directory
+/build
+/export
+
+# Ignore object files and dependent files
+.o
+.d
+.elf
+
+#Ignore logs folder and log files
+/logs
+.log
+
+#Ignore lock files
+.lock
+
+.bin
+.bit
+.pdi
+.xsa
+.vitisWorkspace.json
+.hash-map.txt
+.buildstatus
+.ninja_log
+compile_commands.json
+.cache/
+
+_ide/

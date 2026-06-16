@@ -1,0 +1,96 @@
+# =============================================================================
+# MIPI_VU13P — track source RTL / firmware / scripts; ignore generated & licensed
+# =============================================================================
+
+# --- AI / IDE (local) ---
+.claude/
+.agents/
+.cursor/
+.vscode/
+.idea/
+.clangd
+*.swp
+*~
+skills-lock.json
+
+# --- OS junk ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# --- Secrets / credentials ---
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+
+# --- Python (tools/) ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+.venv/
+venv/
+
+# --- Licensed / confidential documentation ---
+# Sony IMX298 register tables, datasheets, board schematics, MIPI Alliance specs
+docs/schematics/
+docs/specs/
+docs/config/
+docs/IMX298_Standard_Register_Setting.xlsx
+
+# --- Xilinx Vivado ---
+.Xil/
+*.cache/
+*.runs/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.jou
+*.pb
+*.rpt
+*.vdi
+*.vds
+*.wdf
+*.wdb
+*.dcp
+*.ncd
+*.bit
+*.bin
+*.mcs
+*.ltx
+*.mmi
+*.xsa
+
+# Vivado implementation checkpoints (regenerated from runs)
+fpga/vivado/**/utils_1/imports/
+
+# --- Vitis / XSCT ---
+fpga/vitis/_ide/
+fpga/vitis/.rigel_lopper/
+fpga/vitis/**/build/
+fpga/vitis/**/export/
+fpga/vitis/**/_ide/
+fpga/vitis/mipi_platform/microblaze_*/
+fpga/vitis/mipi_platform/hw/
+fpga/vitis/mipi_platform/resources/
+*.elf
+*.o
+*.d
+.pdi
+.vitisWorkspace.json
+.hash-map.txt
+.buildstatus
+.ninja_log
+compile_commands.json
+.cache/
+
+# Vitis platform export artifacts (Xilinx-generated)
+*.xpfm
+*.spfm
