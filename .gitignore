@@ -1,22 +1,26 @@
 # =============================================================================
-# MIPI_VU13P — track source RTL / firmware / scripts; ignore generated & licensed
+# MIPI 测试框架 — track source; ignore generated, local pins, licensed docs
 # =============================================================================
 
 # --- AI / IDE (local) ---
-.claude/
-.agents/
 .cursor/
+.cursorrules
+.agents/
+.claude/
+CLAUDE.md
+AGENTS.md
+TASK.md
+skills-lock.json
+*.plan.md
+.copilot/
+.github/copilot-instructions.md
+.aider*
+.continue/
 .vscode/
 .idea/
 .clangd
 *.swp
 *~
-skills-lock.json
-
-# --- OS junk ---
-Thumbs.db
-Desktop.ini
-.DS_Store
 
 # --- Secrets / credentials ---
 .env
@@ -28,9 +32,15 @@ Desktop.ini
 credentials.json
 secrets.json
 
-# --- Python (tools/) ---
+# --- OS junk ---
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Python ---
 __pycache__/
 *.py[cod]
+*.pyo
 .pytest_cache/
 .mypy_cache/
 *.egg-info/
@@ -41,11 +51,17 @@ venv/
 fpga/constraints/vu13p_pins.xdc
 
 # --- Licensed / confidential documentation ---
-# Sony IMX298 register tables, datasheets, board schematics, MIPI Alliance specs
 docs/schematics/
 docs/specs/
 docs/config/
 docs/IMX298_Standard_Register_Setting.xlsx
+docs/ila/
+docs/capture/
+docs/*.xlsx
+docs/*.csv
+
+# --- Vendor tool project files (may contain local paths) ---
+*.slabtimeproj
 
 # --- Xilinx Vivado ---
 .Xil/
@@ -70,8 +86,6 @@ docs/IMX298_Standard_Register_Setting.xlsx
 *.ltx
 *.mmi
 *.xsa
-
-# Vivado implementation checkpoints (regenerated from runs)
 fpga/vivado/**/utils_1/imports/
 
 # --- Vitis / XSCT ---
@@ -93,10 +107,8 @@ fpga/vitis/mipi_platform/resources/
 .ninja_log
 compile_commands.json
 .cache/
-
-# Vitis platform export artifacts (Xilinx-generated)
 *.xpfm
 *.spfm
 
-docs/ila
-docs/capture
+# --- Simulation build artifacts ---
+xsim.dir/

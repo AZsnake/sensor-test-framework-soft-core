@@ -1,22 +1,22 @@
-# PC 上位机 — PySide6 GUI + UART 协议库 + CLI 诊断脚本
+# tools/
 
-Windows / Linux 均可使用；入口脚本成对提供 `.bat` 与 `.sh`。
+MIPI 工程配套 PC 端脚本。**不加入 Vivado / Vitis 工程。** 各功能按子目录分类。
 
 ## 目录结构
 
 ```
 tools/
-  run_gui.bat / run_gui.sh       # 启动 GUI
-  run_tests.bat / run_tests.sh   # 运行单元测试
-  requirements.txt
-  pytest.ini                     # pytest 配置 (pythonpath=lib)
-  lib/                           # 协议 / 串口 / RAW10 解码
-  gui/                           # PySide6 验证平台
-  scripts/                       # 命令行工具
-    find_stride.py
-    hs_settle_sweep.py
-    download_regs.py
-  tests/
+├── run_gui.bat / run_gui.sh       # 启动 GUI
+├── run_tests.bat / run_tests.sh   # 运行单元测试
+├── requirements.txt
+├── pytest.ini                     # pytest 配置 (pythonpath=lib)
+├── lib/                           # 协议 / 串口 / RAW10 解码
+├── gui/                           # PySide6 验证平台
+├── scripts/                       # 命令行工具
+│   ├── find_stride.py
+│   ├── hs_settle_sweep.py
+│   └── download_regs.py
+└── tests/
 ```
 
 ## 安装
@@ -58,7 +58,7 @@ chmod +x run_gui.sh run_tests.sh
 
 ## 说明
 
-- `lib/` 为共享层: GUI 与 `scripts/` 均通过 `lib` 访问固件 UART 协议 (spec §6)。
-- 抓图宽度须与 sensor 实际行宽一致 (当前基线 **2016**); 见 `gui/control_panel.py` 预设。
-- `scripts/_bootstrap.py` 负责把 `tools/` 与 `tools/lib` 加入 `sys.path`, CLI 脚本无需手动改 CWD。
-- Linux 串口一般为 `/dev/ttyUSB0`、`/dev/ttyACM0` 等；当前用户需 dialout 组权限 (`sudo usermod -aG dialout $USER`)。
+- `lib/` 为共享层：GUI 与 `scripts/` 均通过 `lib` 访问固件 UART 协议。
+- 抓图宽度须与 sensor 实际行宽一致（当前基线 **2016**）；见 `gui/control_panel.py` 预设。
+- `scripts/_bootstrap.py` 负责把 `tools/` 与 `tools/lib` 加入 `sys.path`，CLI 脚本无需手动改 CWD。
+- Linux 串口一般为 `/dev/ttyUSB0`、`/dev/ttyACM0` 等；当前用户需 dialout 组权限（`sudo usermod -aG dialout $USER`）。
