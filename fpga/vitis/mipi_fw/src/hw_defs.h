@@ -38,7 +38,9 @@
 #define CSIRX_GIER_OFFSET       0x20    // Global Interrupt Enable (0=屏蔽中断输出)
 #define CSIRX_ISR_OFFSET        0x24    // Interrupt Status (write-1-clear)
 #define CSIRX_IER_OFFSET        0x28    // Interrupt Enable
-#define CSIRX_CLKINFR_OFFSET    0x3C    // Clock Lane Info
+#define CSIRX_CLKINFR_OFFSET    0x3C    // Clock Lane Info  (bit1=Stop)
+#define CSIRX_L0INFR_OFFSET     0x40    // Data Lane0 Info  (bit0=SoTErr bit1=SoTSyncErr bit5=Stop)
+#define CSIRX_L1INFR_OFFSET     0x44    // Data Lane1 Info
 
 #define CSIRX_CCR_COREENB_MASK    0x00000001
 #define CSIRX_CCR_SOFTRESET_MASK  0x00000002
@@ -48,8 +50,21 @@
 #define CSIRX_ISR_CRCERR_MASK     0x00000200
 #define CSIRX_CLKINFR_STOP_MASK   0x00000002  // 1=时钟lane处于Stop态(非HS); 0=HS → LinkUp
 
-// D-PHY 线速率 (IP 例化固定值, 0x03 响应 Rate 字段)
-#define DPHY_RATE_MBPS  1400
+// D-PHY 子块: 在 CSI-2 RX Subsystem 内部偏移 0x1000 (需 build 时 DPY_EN_REG_IF=true,
+// 否则回读恒 0)。HS_SETTLE 寄存器偏移取自 xdphy_hw.h (per-lane, 9-bit 计数)。
+#define CSIRX_DPHY_OFFSET         0x1000
+#define DPHY_HSSETTLE_L0_OFFSET   0x30    // XDPHY_HSSETTLE_REG_OFFSET  (lane0)
+#define DPHY_HSSETTLE_L1_OFFSET   0x48    // XDPHY_HSSETTLE1_REG_OFFSET (lane1)
+#define DPHY_HSSETTLE_MASK        0x1FF   // XDPHY_HS_SETTLE_MAX_VALUE
+
+// D-PHY 状态寄存器 (xdphy_hw.h) — 比 CSI 控制器 CLKINFR/LxINFR 详细
+#define DPHY_CTRL_OFFSET          0x00    // bit0=SoftReset bit1=DphyEnable
+#define DPHY_CLSTATUS_OFFSET      0x18    // 时钟lane: [1:0]Mode bit2=ULPS bit3=InitDone bit4=Stop bit5=ErrCtrl
+#define DPHY_DL0STATUS_OFFSET     0x1C    // 数据lane0: bit3=InitDone bit4=HSAbort bit5=EscAbort bit6=Stop bit7=CalibDone bit8=CalibStat [31:16]=pktcount
+#define DPHY_DL1STATUS_OFFSET     0x20    // 数据lane1 (同上)
+
+// D-PHY 线速率
+#define DPHY_RATE_MBPS  800
 
 // URAM frame buffer (axis_uram_framebuf, BD Address Editor 固定分配)
 #define FRAMEBUF_BASEADDR   0x80000000

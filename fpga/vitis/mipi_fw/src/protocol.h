@@ -18,6 +18,9 @@
 #define CMD_SET_SOURCE   0x07
 #define CMD_SET_PORT     0x08
 #define CMD_CLR_ERR      0x0A
+#define CMD_LANE_DIAG    0x0B   // dump CSI-2 RX 子系统 lane 状态寄存器 (只读, 6×u32 大端)
+#define CMD_SET_HS_SETTLE 0x0C  // 在线写 D-PHY HS_SETTLE(L0/L1); payload=u16 大端值, 0xFFFF=只读回探
+#define CMD_DPHY_DIAG    0x0D   // dump D-PHY 状态寄存器 (只读, 6×u32 大端): CTRL/CLSTATUS/DL0/DL1/HSSETTLE×2
 
 #define CMD_ACK          0x80
 #define CMD_ERR          0x81

@@ -1,7 +1,7 @@
 {
    "ActiveEmotionalView":"Default View",
    "Default View_ScaleFactor":"0.494852",
-   "Default View_TopLeft":"-143,-255",
+   "Default View_TopLeft":"-143,-253",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:21.0
 #  -string -flagsOSRD
@@ -11,7 +11,7 @@ preplace port port-id_pad_clk_19m2 -pg 1 -lvl 0 -x 0 -y 570 -defaultsOSRD
 preplace port port-id_o_uart_tx -pg 1 -lvl 9 -x 2800 -y 140 -defaultsOSRD
 preplace port port-id_i_uart_rx -pg 1 -lvl 0 -x 0 -y 750 -defaultsOSRD
 preplace port port-id_bg0_pin0_nc_0 -pg 1 -lvl 0 -x 0 -y 490 -defaultsOSRD
-preplace port port-id_bg1_pin0_nc_0 -pg 1 -lvl 0 -x 0 -y 520 -defaultsOSRD
+preplace port port-id_bg2_pin0_nc_0 -pg 1 -lvl 0 -x 0 -y 520 -defaultsOSRD
 preplace portBus cam_vsync -pg 1 -lvl 0 -x 0 -y 780 -defaultsOSRD
 preplace portBus pad_output_d -pg 1 -lvl 9 -x 2800 -y 270 -defaultsOSRD
 preplace inst clk_wiz_0 -pg 1 -lvl 1 -x 120 -y 570 -defaultsOSRD
@@ -33,7 +33,7 @@ preplace netloc axi_gpio_1_gpio_io_o 1 8 1 NJ 270
 preplace netloc axi_uartlite_0_interrupt 1 1 6 210 790 NJ 790 NJ 790 NJ 790 NJ 790 2110
 preplace netloc axi_uartlite_0_tx 1 6 3 NJ 140 NJ 140 NJ
 preplace netloc bg0_pin0_nc_0_1 1 0 6 20J 480 NJ 480 NJ 480 NJ 480 NJ 480 1810J
-preplace netloc bg1_pin0_nc_0_1 1 0 6 30J 490 NJ 490 NJ 490 NJ 490 NJ 490 NJ
+preplace netloc bg2_pin0_nc_0_1 1 0 6 30J 490 NJ 490 NJ 490 NJ 490 NJ 490 NJ
 preplace netloc cam_vsync_1 1 0 9 NJ 780 NJ 780 NJ 780 NJ 780 NJ 780 NJ 780 2140 890 NJ 890 2780
 preplace netloc clk_wiz_0_clk_out2 1 1 5 220 470 NJ 470 NJ 470 NJ 470 1800J
 preplace netloc clk_wiz_0_locked 1 1 6 220 770 NJ 770 NJ 770 NJ 770 NJ 770 2170J

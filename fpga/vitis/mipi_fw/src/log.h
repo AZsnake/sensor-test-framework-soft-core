@@ -3,14 +3,16 @@
 #define LOG_H
 
 #include "xil_printf.h"
+#include "version.h"
 
 #define LOG_BOOT_TOTAL  14u
 
 static inline void log_boot_header(void) {
     xil_printf("\r\n"
                "========================================\r\n"
-               "  MIPI Validation Platform FW v1.0\r\n"
-               "========================================\r\n");
+               "  %s %s\r\n"
+               "========================================\r\n",
+               FW_APP_NAME, FW_VERSION_TAG);
 }
 
 static inline void log_step_begin(unsigned step, const char *label) {

@@ -8,13 +8,13 @@
     "gen_directory": "../../../../../../mipi_vu13p.gen/sources_1/bd/mipi_platform/ip/mipi_platform_u_framebuf_0",
     "parameters": {
       "component_parameters": {
-        "FRAMEBUF_BYTES": [ { "value": "1048576", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "FRAMEBUF_BYTES": [ { "value": "4194304", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "C_S_AXI_DATA_WIDTH": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "C_S_AXI_ADDR_WIDTH": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "Component_Name": [ { "value": "mipi_platform_u_framebuf_0", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
-        "FRAMEBUF_BYTES": [ { "value": "1048576", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "FRAMEBUF_BYTES": [ { "value": "4194304", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_S_AXI_DATA_WIDTH": [ { "value": "32", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_S_AXI_ADDR_WIDTH": [ { "value": "32", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
@@ -39,7 +39,7 @@
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2024.2" } ],
-        "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
+        "SYNTHESISFLOW": [ { "value": "OOC_HIERARCHICAL" } ]
       }
     },
     "boundary": {

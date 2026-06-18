@@ -3,8 +3,8 @@
   "type": "PLATFORM",
   "configuration": {
     "description": "",
-    "xsa": "D:\\Documents\\Work\\Intern_2026_May\\MIPI_VU13P\\fpga\\vivado\\mipi_platform_wrapper_v0.0.4.xsa",
-    "xsaPathInPlatform": "mipi_platform\\hw\\mipi_platform_wrapper_v0.0.4.xsa",
+    "xsa": "D:\\Documents\\Work\\Intern_2026_May\\MIPI_VU13P\\fpga\\vivado\\mipi_platform_wrapper_v0.0.6.xsa",
+    "xsaPathInPlatform": "mipi_platform\\hw\\mipi_platform_wrapper_v0.0.6.xsa",
     "emulationXsa": "",
     "emulationXsaPathInPlatform": "",
     "isCustomFSBL": false,

@@ -1,5 +1,7 @@
 // fpga/vitis/mipi_fw/src/imx298_init_regs.h
-// IMX298 Initialization (2-lane RAW10, 2016x1512)
+// IMX298 Initialization (2-lane RAW10, 2016x1512) — 已知能干净出图的基线配置。
+// 注: 这是全视场的一个裁剪窗口; PG 彩条(0x0601=2)按阵列全宽 4656 画 8 条, 此窗口只显示左 ~3.5 条。
+// 要全视场/全 8 条需一整套自洽的全分辨率 Sony 模式(A4/C4), 仅改几何寄存器会得到不自洽模式(实测棋盘伪影)。
 #ifndef IMX298_INIT_REGS_H
 #define IMX298_INIT_REGS_H
 #include <stdint.h>

@@ -9,14 +9,24 @@
 #include "i2c_bitbang.h"
 #include "sensor.h"
 #include "log.h"
+#include "xpseudo_asm.h"   // csrr(): 读 RISC-V CSR
 #include <stdint.h>
+
+// 读 RISC-V cycle 计数器 (低32位)。此核 C_USE_COUNTERS=1, cycle 按 100MHz CPU 时钟
+// 硬计数、自由运行 (CPU 在跑就在涨)。不用 rdtime/time CSR —— 本核未使能机器定时器
+// 后端(C_USE_SLEEP=0), time CSR 不可靠, 主循环里会停摆导致心跳冻结。
+#define read_cycle()    csrr(cycle)
+
+// LED 心跳步进周期: 100 ms/步 @100MHz。cycle 低32位约 42.9s 回绕; 周期(10M) << 2^32,
+// 无符号差值天然抗回绕。
+#define LED_STEP_TICKS  (XPAR_CPU_CORE_CLOCK_FREQ_HZ / 10U)
 
 XUartLite uart_inst;
 XGpio gpio_inst;
 
 static parser_t parser;
 
-// UART 走主循环轮询 (非中断, 见 spec: 中断模式会被打印回灌 RX 触发风暴)
+// UART 走主循环轮询 (非中断)
 static void uart_poll(void) {
     uint8_t byte;
     while (XUartLite_Recv(&uart_inst, &byte, 1) == 1) {
@@ -87,11 +97,14 @@ int main(void) {
     // 主循环: 轮询 UART 命令 + LED 跑马灯心跳 (spec T1)。
     // 抓图(0x04)期间命令同步阻塞、心跳暂停, 属预期行为。
     uint8_t led = 0x01;
-    uint32_t hb = 0;
+    u32 last_tick = read_cycle();
     while (1) {
-        uart_poll();             // 轮询 UART RX: 解析帧并派发命令
-        if (++hb >= 2000000) {   // 软件计数心跳, 约几十 ms 翻一次
-            hb = 0;
+        uart_poll();                       // 轮询 UART RX: 解析帧并派发命令
+        u32 now = read_cycle();
+        // 无符号差值抗回绕; 用 last=now (而非 +=步进) 使长阻塞命令后从当前时刻重新计相位,
+        // 不会因积压的多个周期产生“追赶式”连闪。
+        if ((u32)(now - last_tick) >= LED_STEP_TICKS) {
+            last_tick = now;
             Xil_Out32(LED_GPIO_BASEADDR, led);
             led = (uint8_t)((led << 1) | (led >> 7));   // 循环左移
         }

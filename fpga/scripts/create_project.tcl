@@ -12,9 +12,18 @@ set part       xcvu13p-fhga2104-2-i
 
 create_project mipi_vu13p $proj_dir -part $part -force
 
-# 自写 RTL 与板级约束
+# 自写 RTL 与板级约束 (管脚 LOC 含板卡信息, 见 constraints/vu13p_pins.xdc.template)
+set pins_xdc "$fpga_dir/constraints/vu13p_pins.xdc"
+set pins_tpl "$fpga_dir/constraints/vu13p_pins.xdc.template"
+if {![file exists $pins_xdc]} {
+    puts "ERROR: 缺少板级约束 $pins_xdc"
+    puts "  请复制模板并填写原理图管脚:"
+    puts "    cp constraints/vu13p_pins.xdc.template constraints/vu13p_pins.xdc"
+    puts "  (vu13p_pins.xdc 已 gitignore, 勿提交仓库)"
+    exit 1
+}
 add_files -norecurse "$fpga_dir/rtl/axis_uram_framebuf.v"
-add_files -fileset constrs_1 -norecurse "$fpga_dir/constraints/vu13p_pins.xdc"
+add_files -fileset constrs_1 -norecurse $pins_xdc
 update_compile_order -fileset sources_1
 
 # ---------------- Block Design ----------------
@@ -78,20 +87,25 @@ set_property -dict [list CONFIG.C_GPIO_WIDTH {8} CONFIG.C_ALL_OUTPUTS {1} CONFIG
 create_bd_port -dir O -from 7 -to 0 pad_output_d
 connect_bd_net [get_bd_pins axi_gpio_1/gpio_io_o] [get_bd_ports pad_output_d]
 
-# --- MIPI CSI-2 RX Subsystem: 2-Lane RAW10, VFB关, 1400 Mbps, Bank 62
+# --- MIPI CSI-2 RX Subsystem: 2-Lane RAW10, VFB关, 800 Mbps, Bank 62
+# Line Rate 800 = IMX298 OP PLL 实测值(非 1400, 见 hw_defs.h 注释)
+# DPY_EN_REG_IF: 开 DPHY 寄存器接口, 便于固件在线调 HS_SETTLE (映射在 csirxss_s_axi +0x1000)
 set mipi_csi2_rx_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem mipi_csi2_rx_0]
 set mipi_base_cfg [list \
     CONFIG.CMN_NUM_LANES {2} \
     CONFIG.CMN_PXL_FORMAT {RAW10} \
     CONFIG.CMN_NUM_PIXELS {1} \
     CONFIG.CMN_INC_VFB {false} \
-    CONFIG.DPY_LINE_RATE {1400} \
+    CONFIG.DPY_LINE_RATE {800} \
+    CONFIG.DPY_EN_REG_IF {true} \
+    CONFIG.C_EN_TIMEOUT_REGS {true} \
     CONFIG.SupportLevel {1} \
     CONFIG.HP_IO_BANK_SELECTION {62} \
 ]
 set_property -dict $mipi_base_cfg $mipi_csi2_rx_0
 # Pin Assignment 须先选 clock lane 再选 data lane (PG232); 参数名 CLK_LANE_IO_LOC
-set_property CONFIG.CLK_LANE_IO_LOC {AY37} $mipi_csi2_rx_0
+# CLK=BE40/BE41(QBC, Bank62), D0=AY38/AY39, D1=BC35/BC36 (原理图实测脚)
+set_property CONFIG.CLK_LANE_IO_LOC {BE40} $mipi_csi2_rx_0
 set_property CONFIG.DATA_LANE0_IO_LOC {AY38} $mipi_csi2_rx_0
 set_property CONFIG.DATA_LANE1_IO_LOC {BC35} $mipi_csi2_rx_0
 # 配引脚后 IP 会自动 export 为 mipi_phy_if_1 等; 统一重命名为 mipi_phy_if
@@ -108,7 +122,9 @@ if {$mipi_phy_port ne ""} {
 }
 # HP IO native D-PHY 需要导出辅助 bitslice 管脚 (strobe propagation), 否则 IP XDC 的
 # PACKAGE_PIN 无法落到 top port, Place 30-687 / Netlist 29-160。板外不接, LOC 由 IP 生成。
-foreach bg_pin {bg0_pin0_nc bg1_pin0_nc} {
+# 注: 辅助 NC 脚集合随 lane 所在 byte group 变化; CLK=BE40(T1)/D0=AY38(T2)/D1=BC35(T0)
+# 时 IP 导出 bg0_pin0_nc + bg2_pin0_nc (不再是 bg1)。IOSTANDARD LVCMOS12 在 vu13p_pins.xdc。
+foreach bg_pin {bg0_pin0_nc bg2_pin0_nc} {
     set pin [get_bd_pins -quiet mipi_csi2_rx_0/$bg_pin]
     if {$pin ne "" && [get_bd_ports -quiet $bg_pin] eq ""} {
         make_bd_pins_external $pin
@@ -119,9 +135,12 @@ connect_bd_net [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins mipi_csi2_rx_0/dphy
 connect_bd_net [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins mipi_csi2_rx_0/video_aclk]
 connect_bd_net [get_bd_pins $rst_cell/peripheral_aresetn] [get_bd_pins mipi_csi2_rx_0/video_aresetn]
 
-# --- URAM 帧缓冲 (复用RTL, Add Module), 1 MiB
+# --- URAM 帧缓冲 (复用RTL, Add Module), 16 MiB
+# 必须 >= 一整帧 2016×1512 RAW10 = 3,810,240 B, 否则抓全幅会在缓冲满处截断(旧 1MiB 只够 ~416 行)。
+# 16 MiB 是本设计上限: 控制寄存器在 +0x01000000(16MiB)处, 数据区 [0,0x01000000) 正好顶到其边界, 不重叠。
+# ≈ 512 个 URAM288 (VU13P 共 1280, ~40%); 可容约 4 整帧。
 set u_framebuf [create_bd_cell -type module -reference axis_uram_framebuf u_framebuf]
-set_property CONFIG.FRAMEBUF_BYTES {1048576} $u_framebuf
+set_property CONFIG.FRAMEBUF_BYTES {16777216} $u_framebuf
 # RX video_out 直连 framebuf 写端口 (同 100MHz 域)
 connect_bd_intf_net [get_bd_intf_pins mipi_csi2_rx_0/video_out] [get_bd_intf_pins u_framebuf/s_axis]
 connect_bd_net [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins u_framebuf/s_axis_aclk]

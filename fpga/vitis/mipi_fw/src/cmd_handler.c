@@ -126,6 +126,70 @@ static void cmd_set_port(const frame_t *f) {
     send_ack(CMD_SET_PORT);
 }
 
+// Lane 诊断: 只读 dump CSI-2 RX 子系统 6 个状态寄存器, 用于定位哪条 lane 不同步。
+// 顺序: CCR(0x00) CSR(0x10) ISR(0x24) ClkLane(0x3C) Lane0(0x40) Lane1(0x44), 各 u32 大端。
+// 只读不清 ISR(write-1-clear), 保留 sticky 误码位供判读。
+static void cmd_lane_diag(const frame_t *f) {
+    (void)f;
+    static const uint16_t offs[6] = {
+        CSIRX_CCR_OFFSET, CSIRX_CSR_OFFSET, CSIRX_ISR_OFFSET,
+        CSIRX_CLKINFR_OFFSET, CSIRX_L0INFR_OFFSET, CSIRX_L1INFR_OFFSET,
+    };
+    uint8_t resp[24];
+    for (int i = 0; i < 6; i++) {
+        uint32_t v = Xil_In32(CSIRX_BASEADDR + offs[i]);
+        resp[i * 4 + 0] = (uint8_t)(v >> 24);
+        resp[i * 4 + 1] = (uint8_t)(v >> 16);
+        resp[i * 4 + 2] = (uint8_t)(v >> 8);
+        resp[i * 4 + 3] = (uint8_t)(v);
+    }
+    send_response(CMD_LANE_DIAG, resp, 24);
+}
+
+// 在线读写 D-PHY HS_SETTLE (L0+L1), 用于 bring-up 期扫描 HS 采样窗口。
+// payload: u16 大端目标值; 0xFFFF = 只读回探(不写, 供客户端自校准 ns/LSB)。
+// 响应 4 字节: L0(u16 大端) L1(u16 大端) 回读值。
+// 注意: 需 bit流 build 时 DPY_EN_REG_IF=true; 否则 D-PHY 寄存器块不存在, 回读恒 0。
+// HS_SETTLE 写后于下一次 HS 进入(下一行)生效, 流式下无需软复位。
+static void cmd_set_hs_settle(const frame_t *f) {
+    if (f->len != 2) { send_err(ERR_INVALID_PARAM); return; }
+    uint16_t val = ((uint16_t)f->payload[0] << 8) | f->payload[1];
+    uint32_t a0 = CSIRX_BASEADDR + CSIRX_DPHY_OFFSET + DPHY_HSSETTLE_L0_OFFSET;
+    uint32_t a1 = CSIRX_BASEADDR + CSIRX_DPHY_OFFSET + DPHY_HSSETTLE_L1_OFFSET;
+    if (val != 0xFFFF) {
+        if (val > DPHY_HSSETTLE_MASK) { send_err(ERR_INVALID_PARAM); return; }
+        Xil_Out32(a0, val);
+        Xil_Out32(a1, val);
+    }
+    uint16_t r0 = (uint16_t)(Xil_In32(a0) & DPHY_HSSETTLE_MASK);
+    uint16_t r1 = (uint16_t)(Xil_In32(a1) & DPHY_HSSETTLE_MASK);
+    uint8_t resp[4] = { (uint8_t)(r0 >> 8), (uint8_t)r0,
+                        (uint8_t)(r1 >> 8), (uint8_t)r1 };
+    send_response(CMD_SET_HS_SETTLE, resp, 4);
+}
+
+// 只读 dump D-PHY 子块状态寄存器, 信息比 CSI 控制器 CLKINFR/LxINFR 丰富:
+// 每 lane 的 Mode/InitDone/HSAbort/CalibComplete/Stop + per-lane 包计数。
+// 顺序: CTRL(0x00) CLSTATUS(0x18) DL0(0x1C) DL1(0x20) HSSETTLE_L0(0x30) HSSETTLE_L1(0x48), 各 u32 大端。
+// 需 bit流 build 时 DPY_EN_REG_IF=true, 否则全 0。
+static void cmd_dphy_diag(const frame_t *f) {
+    (void)f;
+    static const uint16_t offs[6] = {
+        DPHY_CTRL_OFFSET, DPHY_CLSTATUS_OFFSET,
+        DPHY_DL0STATUS_OFFSET, DPHY_DL1STATUS_OFFSET,
+        DPHY_HSSETTLE_L0_OFFSET, DPHY_HSSETTLE_L1_OFFSET,
+    };
+    uint8_t resp[24];
+    for (int i = 0; i < 6; i++) {
+        uint32_t v = Xil_In32(CSIRX_BASEADDR + CSIRX_DPHY_OFFSET + offs[i]);
+        resp[i * 4 + 0] = (uint8_t)(v >> 24);
+        resp[i * 4 + 1] = (uint8_t)(v >> 16);
+        resp[i * 4 + 2] = (uint8_t)(v >> 8);
+        resp[i * 4 + 3] = (uint8_t)(v);
+    }
+    send_response(CMD_DPHY_DIAG, resp, 24);
+}
+
 static void cmd_clr_err(const frame_t *f) {
     (void)f;
     ecc_err_count = 0;
@@ -161,6 +225,9 @@ void cmd_dispatch(const frame_t *frame) {
     case CMD_SET_SOURCE:  cmd_set_source(frame);   break;
     case CMD_SET_PORT:    cmd_set_port(frame);     break;
     case CMD_CLR_ERR:     cmd_clr_err(frame);      break;
+    case CMD_LANE_DIAG:   cmd_lane_diag(frame);    break;
+    case CMD_SET_HS_SETTLE: cmd_set_hs_settle(frame); break;
+    case CMD_DPHY_DIAG:   cmd_dphy_diag(frame);    break;
     default:              send_err(ERR_INVALID_CMD); break;
     }
 }

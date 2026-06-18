@@ -1,6 +1,3 @@
-import pytest
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from init_script import parse_xlsx_registers
 
 def test_parse_returns_list_of_tuples(tmp_path):

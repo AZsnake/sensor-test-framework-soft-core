@@ -37,6 +37,9 @@ __pycache__/
 .venv/
 venv/
 
+# --- Board-specific (package pins from schematics) ---
+fpga/constraints/vu13p_pins.xdc
+
 # --- Licensed / confidential documentation ---
 # Sony IMX298 register tables, datasheets, board schematics, MIPI Alliance specs
 docs/schematics/
@@ -94,3 +97,5 @@ compile_commands.json
 # Vitis platform export artifacts (Xilinx-generated)
 *.xpfm
 *.spfm
+
+docs/ila
