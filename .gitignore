@@ -99,3 +99,4 @@ compile_commands.json
 *.spfm
 
 docs/ila
+docs/capture
