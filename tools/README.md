@@ -54,7 +54,7 @@ chmod +x run_gui.sh run_tests.sh
 | HS_SETTLE 扫描 | `python3 scripts/hs_settle_sweep.py /dev/ttyUSB0` |
 | 寄存器下发 | `python3 scripts/download_regs.py /dev/ttyUSB0 regs.xlsx` |
 
-也可直接：`python3 gui/main.py`、`python3 -m pytest`（在 `tools/` 目录下）。
+也可直接：`python gui/main.py`、`python -m pytest`（在 `tools/` 目录下）。
 
 ## 说明
 

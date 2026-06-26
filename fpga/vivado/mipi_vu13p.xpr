@@ -4,7 +4,7 @@
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.                   -->
 <!-- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.   -->
 
-<Project Product="Vivado" Version="7" Minor="68" Path="D:/Documents/Work/Intern_2026_May/MIPI_VU13P/fpga/vivado/mipi_vu13p.xpr">
+<Project Product="Vivado" Version="7" Minor="68" Path="$PPRDIR/mipi_vu13p.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="456c616f7ed141c29e8526822ce57b24"/>

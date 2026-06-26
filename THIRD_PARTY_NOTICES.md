@@ -2,7 +2,7 @@
 
 ## 传感器初始化表 — Sony IMX298
 
-`fpga/vitis/mipi_fw/src/imx298_init_regs.h` 中的寄存器序列来自个人联调配置，**不代表 Sony 官方推荐设置**。IMX298 数据手册与标准寄存器表受 Sony 版权约束，**本仓库不跟踪** `docs/specs/` 下的厂商 PDF / Excel。
+`fpga/vitis/mipi_fw/src/imx298_init_regs.h` 中的寄存器序列来自参考配置，**不代表 Sony 官方推荐设置**。IMX298 数据手册与标准寄存器表受 Sony 版权约束，**本仓库不跟踪** `docs/specs/` 下的厂商 PDF / Excel。
 
 如需再分发本仓库，请自行确认是否有权包含上述寄存器内容，或改用公开参考实现替换。
 

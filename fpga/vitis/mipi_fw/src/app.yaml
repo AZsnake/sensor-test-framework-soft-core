@@ -1,4 +1,0 @@
-domain_path: D:\Documents\Work\Intern_2026_May\MIPI_VU13P\fpga\vitis\mipi_platform\export\mipi_platform\sw\standalone_microblaze_0
-app_src_dir: D:\Applications\AMD\Vitis\2024.2\data\embeddedsw\lib\sw_apps\empty_application
-template: empty_application
-lang: c

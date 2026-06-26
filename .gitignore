@@ -53,6 +53,8 @@ fpga/constraints/vu13p_pins.xdc
 # --- Licensed / confidential documentation ---
 docs/schematics/
 docs/specs/
+docs/*BOARD*
+docs/*整体*
 docs/config/
 docs/IMX298_Standard_Register_Setting.xlsx
 docs/ila/
@@ -91,6 +93,8 @@ fpga/vivado/**/utils_1/imports/
 # --- Vitis / XSCT ---
 fpga/vitis/_ide/
 fpga/vitis/.rigel_lopper/
+fpga/vitis/**/app.yaml
+fpga/vitis/**/vitis-comp.json
 fpga/vitis/**/build/
 fpga/vitis/**/export/
 fpga/vitis/**/_ide/
