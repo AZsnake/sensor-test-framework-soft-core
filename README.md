@@ -8,6 +8,15 @@
 
 许可证：[MIT](LICENSE)（第三方模块见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)）
 
+## 姊妹项目
+
+同一 **VU13P + IMX298** MIPI CSI-2 验证平台的两套实现，共享 Vivado Block Design（`mipi_platform`）与 PySide6 上位机（`tools/` UART 协议兼容）：
+
+| 仓库 | 说明 |
+|------|------|
+| [**sensor-test-framework-soft-core**](https://github.com/AZsnake/sensor-test-framework-soft-core) | **本仓库** — MicroBlaze 固件 + Vitis；D-PHY / Lane 深度联调、HS_SETTLE 扫描 |
+| [**sensor-test-framework-pure-rtl**](https://github.com/AZsnake/sensor-test-framework-pure-rtl) | 姊妹项目 — 纯 RTL `mipi_sys_ctrl`，无 MicroBlaze / Vitis；init mem BRAM 上电初始化 |
+
 ---
 
 ## 功能亮点
